@@ -4,21 +4,49 @@
 #
 # See documentation in:
 # https://docs.scrapy.org/en/latest/topics/spider-middleware.html
-
+import base64
 from scrapy import signals
-
-
+from scrapy.downloadermiddlewares.useragent import UserAgentMiddleware
+import random
+#設置代理ip
+# PROXIES = [
+#     {'ip_port': '61.160.233.8', 'user_pass': ''},
+#     {'ip_port': '125.93.149.186', 'user_pass': ''},
+#     {'ip_port': '58.38.86.181', 'user_pass': ''},
+#     {'ip_port': '119.142.86.110', 'user_pass': ''},
+#     {'ip_port': '124.161.16.89', 'user_pass': ''},
+#     {'ip_port': '61.160.233.8', 'user_pass': ''},
+#     {'ip_port': '101.94.131.237', 'user_pass': ''},
+#     {'ip_port': '219.157.162.97', 'user_pass': ''},
+#     {'ip_port': '61.152.89.18', 'user_pass': ''},
+#     {'ip_port': '139.224.132.192', 'user_pass': ''}
+# ]
+# class ProxyMiddleware(object):
+#     def process_request(self, request, spider):
+#         proxy = random.choice(PROXIES)
+#         if proxy['user_pass'] is not None:
+#             request.meta['proxy'] = "http://%s" % proxy['ip_port']
+#             encoded_user_pass = base64.encodestring(proxy['user_pass'])
+#             request.headers['Proxy-Authorization'] = 'Basic ' + encoded_user_pass
+#         else:
+#             request.meta['proxy'] = "http://%s" % proxy['ip_port']
+            
 class StockSpiderMiddleware(object):
     # Not all methods need to be defined. If a method is not defined,
     # scrapy acts as if the spider middleware does not modify the
     # passed objects.
-
+    def _init_(self, ip):
+        self.ip = ip
     @classmethod
     def from_crawler(cls, crawler):
-        # This method is used by Scrapy to create your spiders.
-        s = cls()
-        crawler.signals.connect(s.spider_opened, signal=signals.spider_opened)
-        return s
+        #This method is used by Scrapy to create your spiders.
+        # s = cls()
+        # crawler.signals.connect(s.spider_opened, signal=signals.spider_opened)
+        # return s
+        return cls(ip = crawler.settings.get('PROXIES'))
+    def process_request(self, request, spider):
+        ip = random.choice(self.ip)
+        request.meta['proxy'] = ip
 
     def process_spider_input(self, response, spider):
         # Called for each response that goes through the spider
@@ -26,7 +54,7 @@ class StockSpiderMiddleware(object):
 
         # Should return None or raise an exception.
         return None
-
+        
     def process_spider_output(self, response, result, spider):
         # Called with the results returned from the Spider, after
         # it has processed the response.
@@ -55,12 +83,25 @@ class StockSpiderMiddleware(object):
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)
 
+class MyUserAgentMiddleware(UserAgentMiddleware):
+    def _init_(self, useragent):
+        self.user_agent = useragent
+
+    def from_crawler(self, cls, crawler):
+        return cls(
+            user_agent = crawler.settings.get('USER_AGENTS_LIST')
+    )
+    def process_request(self, request, spider):
+        agent = random.choice(self.user_agent)
+        request.headers['User-Agent'] = agent   
+    
 
 class StockDownloaderMiddleware(object):
     # Not all methods need to be defined. If a method is not defined,
     # scrapy acts as if the downloader middleware does not modify the
     # passed objects.
-
+    def _init_(self, ip):
+        self.ip = ip
     @classmethod
     def from_crawler(cls, crawler):
         # This method is used by Scrapy to create your spiders.
@@ -78,7 +119,9 @@ class StockDownloaderMiddleware(object):
         # - or return a Request object
         # - or raise IgnoreRequest: process_exception() methods of
         #   installed downloader middleware will be called
-        return None
+        # return None
+        ip = random.choice(self.ip)
+        request.meta['proxy'] = ip
 
     def process_response(self, request, response, spider):
         # Called with the response returned from the downloader.
@@ -101,3 +144,4 @@ class StockDownloaderMiddleware(object):
 
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)
+

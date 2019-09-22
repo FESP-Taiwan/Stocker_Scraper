@@ -2,13 +2,12 @@ import scrapy
 import json
 import time
 
-
 class PriceSpider(scrapy.Spider):
     name = 'stock'
     response_json = {}
    
     def start_requests(self):
-        for year in range(2014, 2016): 
+        for year in range(2014, 2019): 
             str_year = str(year) 
             for month in range(1,13):
                 str_month = str(month)
