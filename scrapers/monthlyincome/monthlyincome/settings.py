@@ -14,6 +14,9 @@ BOT_NAME = 'monthlyincome'
 SPIDER_MODULES = ['monthlyincome.spiders']
 NEWSPIDER_MODULE = 'monthlyincome.spiders'
 
+MONGO_STRING = 'mongodb+srv://py_scrapy:scrapy@balancesheetreport-wo30d.mongodb.net/test?retryWrites=true&w=majority'
+MONGO_DB = 'MonthlyIncome'
+MONGO_COLLECTION = 'twse'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'monthlyincome (+http://www.yourdomain.com)'
@@ -27,7 +30,7 @@ ROBOTSTXT_OBEY = False
 # Configure a delay for requests for the same website (default: 0)
 # See https://docs.scrapy.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
-DOWNLOAD_DELAY = 3
+DOWNLOAD_DELAY = 5
 # The download delay setting will honor only one of:
 #CONCURRENT_REQUESTS_PER_DOMAIN = 16
 #CONCURRENT_REQUESTS_PER_IP = 16
@@ -64,9 +67,9 @@ DOWNLOAD_DELAY = 3
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-#ITEM_PIPELINES = {
-#    'monthlyincome.pipelines.MonthlyincomePipeline': 300,
-#}
+ITEM_PIPELINES = {
+   'monthlyincome.pipelines.MonthlyincomePipeline': 300,
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
