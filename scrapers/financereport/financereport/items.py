@@ -8,7 +8,7 @@
 import scrapy
 class FinancereportItem(scrapy.Item):
     # define the fields for your item here like:
-    balanceSheet_list = scrapy.Field()
-    comprehensiveIncom_list = scrapy.Field()
-    cashFlow_list = scrapy.Field()
+    balanceSheet = scrapy.Field()
+    comprehensiveIncom = scrapy.Field()
+    cashFlow = scrapy.Field()
     pass
