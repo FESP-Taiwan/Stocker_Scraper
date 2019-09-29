@@ -5,6 +5,9 @@ from ..items import MonthlyincomeItem
 import pandas as pd
 import requests
 import numpy as np
+from scrapy.spiders import Spider
+from scrapy_splash import SplashRequest
+
 class ExampleSpider(scrapy.Spider):
     name = 'monthlyincome'
     def start_requests(self):
@@ -13,7 +16,8 @@ class ExampleSpider(scrapy.Spider):
         # for month in range(1,13):
         qry_str = str(year)+'_'+str(month)
         url = 'https://mops.twse.com.tw/nas/t21/sii/t21sc03_'+qry_str+'_0.html'
-        yield scrapy.Request(url=url,meta={'year':year,'month':month},callback=self.parse)
+        #yield scrapy.Request(url=url,meta={'year':year,'month':month},callback=self.parse)
+        yield SplashRequest(url=url,meta={'year':year,'month':month},callback=self.parse, args = {"wait": 3})
     def parse(self, response):
         data = response.body
         soup = BeautifulSoup(data, 'lxml')
