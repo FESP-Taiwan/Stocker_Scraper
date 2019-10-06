@@ -27,7 +27,6 @@ class reportSpider(scrapy.Spider):
         etf_db = self.client['Etfingredient']
         etf_collection = etf_db['cnyes']
         tickers = etf_collection.find_one({"ticker":"0050"})['ingredient']
-        ticker = 2891
         start_year = 2013
         end_year = 2019
         for ticker in tickers:
