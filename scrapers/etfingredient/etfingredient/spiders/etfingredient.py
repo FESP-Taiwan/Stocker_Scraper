@@ -5,13 +5,21 @@ import time
 from datetime import datetime
 from bs4 import BeautifulSoup
 from ..items import EtfingredientItem
+from etfingredient import settings
+import pymongo
+from pymongo import MongoClient
 class EtfingredientSpider(scrapy.Spider):
     name = 'etfingredient'
-    
+    def __init__(self):    #連線資料庫，資料庫相關設定值放在settings.py
+        self.client = MongoClient(settings.MONGO_STRING)
+        self.db = self.client['TickerPool']
+        self.tickerpool = self.db['twse']
     def start_requests(self):
-        ticker = "0050"
-        url = 'https://www.cnyes.com/twstock/Etfingredient/'+ticker+'.html'
-        yield scrapy.Request(url = url, meta={'ticker':ticker},callback = self.parse)
+        tickers = self.tickerpool.find({"ticker_type":"ETF"})
+        for ticker in tickers :
+            ticker = ticker['ticker']
+            url = 'https://www.cnyes.com/twstock/Etfingredient/'+ticker+'.html'
+            yield scrapy.Request(url = url, meta={'ticker':ticker},callback = self.parse)
     def parse(self, response):
         data = response.body
         soup = BeautifulSoup(data,'lxml')
