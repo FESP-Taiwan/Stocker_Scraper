@@ -2,12 +2,20 @@
 import scrapy
 from bs4 import BeautifulSoup
 from ..items import DividendItem
+from pymongo import MongoClient
+import pymongo
+from dividend import settings
 class ExampleSpider(scrapy.Spider):
     name = 'dividend'
+    def __init__(self):    #連線資料庫，資料庫相關設定值放在settings.py
+        self.client = MongoClient(settings.MONGO_STRING)
+        self.db = self.client['Etfingredient']
+        self.collection = self.db['cnyes']
     def start_requests(self):
-        tickers = [2891,2330]
+        tickers = self.collection.find_one({"ticker":"0050"})['ingredient']
         for ticker in tickers:
-            url = 'https://histock.tw/stock/financial.aspx?no='+str(ticker)+'&t=2'
+            ticker = ticker['ticker']
+            url = 'https://histock.tw/stock/financial.aspx?no='+ticker+'&t=2'
             yield scrapy.Request(url=url,meta={'ticker':ticker},callback=self.parse)
     def parse(self, response):
         data = response.body

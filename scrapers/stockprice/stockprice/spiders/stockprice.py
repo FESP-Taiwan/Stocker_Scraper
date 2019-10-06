@@ -3,21 +3,29 @@ import json
 import time
 from stockprice.items import StockpriceItem
 import datetime
+from pymongo import MongoClient
+import pymongo
+from stockprice import settings
 class PriceSpider(scrapy.Spider):
     name = 'stockprice'
     response_json = {}
-    tickers = [2330,2891]
+    def __init__(self):    #連線資料庫，資料庫相關設定值放在settings.py
+        self.client = MongoClient(settings.MONGO_STRING)
+        self.db = self.client['Etfingredient']
+        self.collection = self.db['cnyes']
     def start_requests(self):
-        start_date = 2014
-        end_date = 2014
-        for ticker in self.tickers:
+        start_date = 2010
+        end_date = 2019
+        tickers = self.collection.find_one({"ticker":"0050"})['ingredient']
+        for ticker in tickers:
+            ticker = ticker['ticker']
             for year in range(start_date, end_date+1): 
                 str_year = str(year) 
                 for month in range(1,13):
                     str_month = str(month)
                     if len(str_month)<2:
                         str_month = '0'+str_month
-                    url = 'https://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date='+ str_year +str_month+'01&stockNo='+str(ticker)
+                    url = 'https://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date='+ str_year +str_month+'01&stockNo='+ticker
                     yield scrapy.Request(url = url, meta={'ticker':ticker},callback = self.parse)
     def transform_date(self, date):  #民國轉西元
         y, m, d = date.split('/')

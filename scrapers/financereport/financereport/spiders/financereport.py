@@ -4,6 +4,7 @@ import time
 import pandas as pd
 from lxml import etree
 from bs4 import BeautifulSoup
+from pymongo import MongoClient
 import pymongo
 class reportSpider(scrapy.Spider):
     name = 'financereport'
@@ -12,7 +13,7 @@ class reportSpider(scrapy.Spider):
     BS_DB = "BalanceSheet"
     CI_DB = "ComprehensiveIncom"
     CF_DB = "CashFlow"
-    client = pymongo.MongoClient("mongodb+srv://py_scrapy:scrapy@balancesheetreport-wo30d.mongodb.net/test?retryWrites=true&w=majority")
+    client = MongoClient("mongodb+srv://py_scrapy:scrapy@balancesheetreport-wo30d.mongodb.net/test?retryWrites=true&w=majority")
     db = client[mongo_db]
     bs_collection = db[BS_DB]
     ci_collection = db[CI_DB]
@@ -23,13 +24,18 @@ class reportSpider(scrapy.Spider):
             'Accept': 'application/json,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
             'Accept-Encoding': 'gzip, deflate, sdch',
         }
+        etf_db = self.client['Etfingredient']
+        etf_collection = etf_db['cnyes']
+        tickers = etf_collection.find_one({"ticker":"0050"})['ingredient']
         ticker = 2891
         start_year = 2013
-        end_year = 2013
-        for year in range(start_year,end_year+1): # 2013 is the api limit
-            for season in range(1,4+1):
-                url = 'https://mops.twse.com.tw/server-java/t164sb01?step=1&CO_ID='+str(ticker)+'&SYEAR='+str(year)+'&SSEASON='+str(season)+'&REPORT_ID=C'
-                yield scrapy.Request(url=url,callback=self.parse,meta={'year':year,'season':season,"ticker":ticker},headers=headers)
+        end_year = 2019
+        for ticker in tickers:
+            ticker = ticker['ticker']
+            for year in range(start_year,end_year+1): # 2013 is the api limit
+                for season in range(1,4+1):
+                    url = 'https://mops.twse.com.tw/server-java/t164sb01?step=1&CO_ID='+ticker+'&SYEAR='+str(year)+'&SSEASON='+str(season)+'&REPORT_ID=C'
+                    yield scrapy.Request(url=url,callback=self.parse,meta={'year':year,'season':season,"ticker":ticker},headers=headers)
     def BalanceSheet_parser(self,soup):
         table = 'table:nth-of-type(1) > '
         date = soup.select_one(table+"tr:nth-of-type(2) > th:nth-of-type(3) > span.en").text
