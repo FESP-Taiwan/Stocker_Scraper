@@ -13,6 +13,10 @@ class reportSpider(scrapy.Spider):
     CI_DB = "ComprehensiveIncom"
     CF_DB = "CashFlow"
     client = pymongo.MongoClient("mongodb+srv://py_scrapy:scrapy@balancesheetreport-wo30d.mongodb.net/test?retryWrites=true&w=majority")
+    db = client[mongo_db]
+    bs_collection = db[BS_DB]
+    ci_collection = db[CI_DB]
+    cf_collection = db[CF_DB]
     def start_requests(self):
         headers =  {
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.84 Safari/537.36',
@@ -43,7 +47,7 @@ class reportSpider(scrapy.Spider):
                     ifrs_key = td.select('span.zh')[0].text
                     ifrs_key = ifrs_key.replace('\u3000','')
                 if(idx==2):
-                    ifrs_value = td.getText()
+                    ifrs_value = td.getText().replace(",","")
             if(json['code']!='N/A'):
                 json[ifrs_key] = ifrs_value
                 if self.DEBUG:
@@ -61,7 +65,7 @@ class reportSpider(scrapy.Spider):
                     ifrs_key = td.getText()
                     ifrs_key = ifrs_key.replace('\u3000','')
                 if(idx==1):
-                    ifrs_value = td.getText().strip()
+                    ifrs_value = td.getText().strip().replace(",","")
             if(ifrs_key!=''):
                 json[ifrs_key] = ifrs_value
                 if self.DEBUG:
@@ -84,7 +88,7 @@ class reportSpider(scrapy.Spider):
                     ifrs_key = td.select('span.zh')[0].text
                     ifrs_key = ifrs_key.replace('\u3000','')
                 if(idx==2):
-                    ifrs_value = td.getText()
+                    ifrs_value = td.getText().replace(",","")
             if(json['code']!='N/A'):
                 json[ifrs_key] = ifrs_value
                 if self.DEBUG:
@@ -103,7 +107,7 @@ class reportSpider(scrapy.Spider):
                     ifrs_key = td.getText()
                     ifrs_key = ifrs_key.replace('\u3000','')
                 if(idx==1):
-                    ifrs_value = td.getText().strip()
+                    ifrs_value = td.getText().strip().replace(",","")
             if(ifrs_key!=''):
                 json[ifrs_key] = ifrs_value
                 if self.DEBUG:
@@ -127,7 +131,7 @@ class reportSpider(scrapy.Spider):
                     ifrs_key = td.select('span.zh')[0].text
                     ifrs_key = ifrs_key.replace('\u3000','')
                 if(idx==2):
-                    ifrs_value = td.getText()
+                    ifrs_value = td.getText().replace(",","")
             if(json['code']!='N/A'):
                 json[ifrs_key] = ifrs_value
                 if self.DEBUG:
@@ -146,7 +150,7 @@ class reportSpider(scrapy.Spider):
                     ifrs_key = td.getText()
                     ifrs_key = ifrs_key.replace('\u3000','')
                 if(idx==1):
-                    ifrs_value = td.getText().strip()
+                    ifrs_value = td.getText().strip().replace(",","")
             if(ifrs_key!=''):
                 json[ifrs_key] = ifrs_value
                 if self.DEBUG:
@@ -175,6 +179,10 @@ class reportSpider(scrapy.Spider):
         bs_json.update(temp_json)
         ci_json.update(temp_json)
         cf_json.update(temp_json)
-        self.client[self.mongo_db][self.BS_DB].insert_one(bs_json)
-        self.client[self.mongo_db][self.CI_DB].insert_one(ci_json)
-        self.client[self.mongo_db][self.CF_DB].insert_one(cf_json)
+        
+        if self.bs_collection.find({"ticker":ticker,"season":season,"year":year}).count() == 0:
+            self.bs_collection.insert_one(bs_json)
+        if self.ci_collection.find({"ticker":ticker,"season":season,"year":year}).count() == 0:
+            self.ci_collection.insert_one(bs_json)
+        if self.cf_collection.find({"ticker":ticker,"season":season,"year":year}).count() == 0:
+            self.cf_collection.insert_one(bs_json)
