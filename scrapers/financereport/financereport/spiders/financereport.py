@@ -1,5 +1,7 @@
 from ..items import FinancereportItem
 import scrapy
+from scrapy_splash import SplashRequest
+from scrapy_splash import SplashMiddleware
 import time
 import pandas as pd
 from lxml import etree
@@ -34,10 +36,10 @@ class reportSpider(scrapy.Spider):
             for year in range(start_year,end_year+1): # 2013 is the api limit
                 for season in range(1,4+1):
                     url = 'https://mops.twse.com.tw/server-java/t164sb01?step=1&CO_ID='+ticker+'&SYEAR='+str(year)+'&SSEASON='+str(season)+'&REPORT_ID=C'
-                    yield scrapy.Request(url=url,callback=self.parse,meta={'year':year,'season':season,"ticker":ticker},headers=headers)
+                    #yield scrapy.Request(url=url,callback=self.parse,meta={'year':year,'season':season,"ticker":ticker},headers=headers)
+                    yield SplashRequest(url=url,meta={'year':year,'season':season,"ticker":ticker},callback=self.parse, args = {"wait": "2"})
     def BalanceSheet_parser(self,soup):
-        table = 'table:nth-of-type(1) > '
-        date = soup.select_one(table+"tr:nth-of-type(2) > th:nth-of-type(3) > span.en").text
+        date = soup.select_one("body > div.container > div.content > table:nth-child(3) > tbody > tr:nth-child(2) > th:nth-child(3) > span.en").text
         tables = soup.findAll('table')
         tab = tables[0]
         json = {'code':'N/A','report_date':date}
@@ -77,8 +79,7 @@ class reportSpider(scrapy.Spider):
                     print(json)
         return json
     def ComprehensiveIncom_parser(self,soup):
-        table = 'table:nth-of-type(2) > '
-        date = soup.select_one(table+"tr:nth-of-type(2) > th:nth-of-type(3) > span.en").text
+        date = soup.select_one("body > div.container > div.content > table:nth-child(7) > tbody > tr:nth-child(2) > th:nth-child(3) > span.en").text
         tables = soup.findAll('table')
         tab = tables[1]
         json = {'code':'N/A','report_date':date}
@@ -120,8 +121,7 @@ class reportSpider(scrapy.Spider):
         return json
         
     def CashFlow_parser(self,soup):
-        table = 'table:nth-of-type(3) > '
-        date = soup.select_one(table+"tr:nth-of-type(2) > th:nth-of-type(3) > span.en").text
+        date = soup.select_one("body > div.container > div.content > table:nth-child(11) > tbody > tr:nth-child(2) > th:nth-child(3) > span.en").text
         tables = soup.findAll('table')
         tab = tables[2]
         json = {'code':'N/A','report_date':date}
@@ -184,10 +184,10 @@ class reportSpider(scrapy.Spider):
         bs_json.update(temp_json)
         ci_json.update(temp_json)
         cf_json.update(temp_json)
-        
+        #print(bs_json)
         if self.bs_collection.find({"ticker":ticker,"season":season,"year":year}).count() == 0:
             self.bs_collection.insert_one(bs_json)
         if self.ci_collection.find({"ticker":ticker,"season":season,"year":year}).count() == 0:
-            self.ci_collection.insert_one(bs_json)
+            self.ci_collection.insert_one(ci_json)
         if self.cf_collection.find({"ticker":ticker,"season":season,"year":year}).count() == 0:
-            self.cf_collection.insert_one(bs_json)
+            self.cf_collection.insert_one(cf_json)
