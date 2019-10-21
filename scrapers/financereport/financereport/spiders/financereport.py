@@ -53,8 +53,10 @@ class reportSpider(scrapy.Spider):
                 if(idx==1):
                     ifrs_key = td.select('span.zh')[0].text
                     ifrs_key = ifrs_key.replace('\u3000','')
+                    ifrs_key = ifrs_key.replace(' ','')
                 if(idx==2):
                     ifrs_value = td.getText().replace(",","")
+                    ifrs_value = ifrs_value.replace(' ','')
             if(json['code']!='N/A'):
                 json[ifrs_key] = ifrs_value
                 if self.DEBUG:
@@ -71,8 +73,10 @@ class reportSpider(scrapy.Spider):
                 if(idx==0):
                     ifrs_key = td.getText()
                     ifrs_key = ifrs_key.replace('\u3000','')
+                    ifrs_key = ifrs_key.replace(' ','')
                 if(idx==1):
                     ifrs_value = td.getText().strip().replace(",","")
+                    ifrs_value = ifrs_value.replace(' ','')
             if(ifrs_key!=''):
                 json[ifrs_key] = ifrs_value
                 if self.DEBUG:
@@ -93,8 +97,10 @@ class reportSpider(scrapy.Spider):
                 if(idx==1):
                     ifrs_key = td.select('span.zh')[0].text
                     ifrs_key = ifrs_key.replace('\u3000','')
+                    ifrs_key = ifrs_key.replace(' ','')
                 if(idx==2):
                     ifrs_value = td.getText().replace(",","")
+                    ifrs_value = ifrs_value.replace(' ','')
             if(json['code']!='N/A'):
                 json[ifrs_key] = ifrs_value
                 if self.DEBUG:
@@ -112,8 +118,10 @@ class reportSpider(scrapy.Spider):
                 if(idx==0):
                     ifrs_key = td.getText()
                     ifrs_key = ifrs_key.replace('\u3000','')
+                    ifrs_key = ifrs_key.replace(' ','')
                 if(idx==1):
                     ifrs_value = td.getText().strip().replace(",","")
+                    ifrs_value = ifrs_value.replace(' ','')
             if(ifrs_key!=''):
                 json[ifrs_key] = ifrs_value
                 if self.DEBUG:
@@ -135,8 +143,10 @@ class reportSpider(scrapy.Spider):
                 if(idx==1):
                     ifrs_key = td.select('span.zh')[0].text
                     ifrs_key = ifrs_key.replace('\u3000','')
+                    ifrs_key = ifrs_key.replace(' ','')
                 if(idx==2):
                     ifrs_value = td.getText().replace(",","")
+                    ifrs_value = ifrs_value.replace(' ','')
             if(json['code']!='N/A'):
                 json[ifrs_key] = ifrs_value
                 if self.DEBUG:
@@ -154,8 +164,10 @@ class reportSpider(scrapy.Spider):
                 if(idx==0):
                     ifrs_key = td.getText()
                     ifrs_key = ifrs_key.replace('\u3000','')
+                    ifrs_key = ifrs_key.replace(' ','')
                 if(idx==1):
                     ifrs_value = td.getText().strip().replace(",","")
+                    ifrs_value = ifrs_value.replace(' ','')
             if(ifrs_key!=''):
                 json[ifrs_key] = ifrs_value
                 if self.DEBUG:
