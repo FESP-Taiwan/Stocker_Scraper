@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Scrapy settings for dividend project
+# Scrapy settings for etfingredient project
 #
 # For simplicity, this file contains only settings considered important or
 # commonly used. You can find more settings consulting the documentation:
@@ -9,16 +9,16 @@
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
-BOT_NAME = 'dividend'
+BOT_NAME = 'etfingredient'
 
-SPIDER_MODULES = ['dividend.spiders']
-NEWSPIDER_MODULE = 'dividend.spiders'
-
+SPIDER_MODULES = ['etfingredient.spiders']
+NEWSPIDER_MODULE = 'etfingredient.spiders'
 MONGO_STRING = 'mongodb+srv://py_scrapy:scrapy@balancesheetreport-wo30d.mongodb.net/test?retryWrites=true&w=majority'
-MONGO_DB = 'Dividend'
-MONGO_COLLECTION = 'histock'
+MONGO_DB = 'Etfingredient'
+MONGO_COLLECTION = 'cnyes'
+
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = 'dividend (+http://www.yourdomain.com)'
+#USER_AGENT = 'etfingredient (+http://www.yourdomain.com)'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
@@ -29,7 +29,7 @@ ROBOTSTXT_OBEY = False
 # Configure a delay for requests for the same website (default: 0)
 # See https://docs.scrapy.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
-DOWNLOAD_DELAY = 5
+DOWNLOAD_DELAY = 3
 # The download delay setting will honor only one of:
 #CONCURRENT_REQUESTS_PER_DOMAIN = 16
 #CONCURRENT_REQUESTS_PER_IP = 16
@@ -49,13 +49,13 @@ DOWNLOAD_DELAY = 5
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 #SPIDER_MIDDLEWARES = {
-#    'dividend.middlewares.DividendSpiderMiddleware': 543,
+#    'etfingredient.middlewares.EtfingredientSpiderMiddleware': 543,
 #}
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #DOWNLOADER_MIDDLEWARES = {
-#    'dividend.middlewares.DividendDownloaderMiddleware': 543,
+#    'etfingredient.middlewares.EtfingredientDownloaderMiddleware': 543,
 #}
 
 # Enable or disable extensions
@@ -67,7 +67,7 @@ DOWNLOAD_DELAY = 5
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-   'dividend.pipelines.DividendPipeline': 300,
+   'etfingredient.pipelines.EtfingredientPipeline': 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

@@ -13,11 +13,12 @@ from scrapy.selector import Selector
 class ExampleSpider(scrapy.Spider):
     name = 'monthlyincome'
     def start_requests(self):
-        year = 107
-        for month in range(1,13):
-            qry_str = str(year)+'_'+str(month)
-            url = 'https://mops.twse.com.tw/nas/t21/sii/t21sc03_'+qry_str+'_0.html'
-            yield SplashRequest(url=url,meta={'year':year,'month':month},callback=self.parse, args = {"wait": "3"})
+        #year = 107
+        for year in range(100,109):
+            for month in range(1,13):
+                qry_str = str(year)+'_'+str(month)
+                url = 'https://mops.twse.com.tw/nas/t21/sii/t21sc03_'+qry_str+'_0.html'
+                yield SplashRequest(url=url,meta={'year':year,'month':month},callback=self.parse, args = {"wait": "3"})
     def parse(self, response):
         data = response.body
         soup = BeautifulSoup(data, 'html.parser') # use lxml will cause error
